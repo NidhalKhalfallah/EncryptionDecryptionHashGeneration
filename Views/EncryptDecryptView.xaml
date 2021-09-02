@@ -20,6 +20,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal"
                     Grid.Row="0"
@@ -28,6 +29,7 @@
                     >
             <Border BorderThickness="1" BorderBrush="Black" Margin="6,10">
                 <TextBlock Text="aaaaaaaaaaaaaa"
+                           Name="FileAddress"
                            Width="450"
                        FontSize="20" Margin="6,10"
                     />
@@ -55,10 +57,26 @@
         </Border>
         <StackPanel Orientation="Horizontal"
                     Grid.Row="6"
+                   Grid.Column="0" Margin="6,10"
+                   Grid.ColumnSpan="2"
+                    >
+            <TextBlock Text="Key"
+                   FontSize="20"
+                       FontWeight="Bold"
+                FontFamily="Comic Sans MS"
+                       Margin="6,10"/>
+
+            <TextBox Name="KeyText"
+                     Width="600"
+                   FontSize="20"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="7"
                    Grid.Column="1" Margin="6,10"
                     >
             <Button Name="EncryptButton"
                    Content="Encrypt"
+                    Click="EncryptButton_Click"
                    FontSize="30"
                    FontWeight="Bold"
                 FontFamily="Comic Sans MS"
