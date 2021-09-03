@@ -27,6 +27,8 @@ namespace EncryptionDecryptionHashGeneration.Views
             InitializeComponent();
         }
         private static byte[] _emptyBuffer = new byte[0];
+        private string ImageDirectory= null;
+        private string ImageName = null;
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             
@@ -62,11 +64,14 @@ namespace EncryptionDecryptionHashGeneration.Views
                 var s = new StringBuilder();
                 foreach (byte b in testresult)
                     s.Append(b.ToString("x2").ToLower());
-                 //MessageBox.Show(s.ToString());
+
+                ImageDirectory = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
+                //MessageBox.Show(s.ToString());
 
                 //BitConverter.ToString(md5.Hash).Replace("-", "");
                 //MessageBox.Show(buffer[6].ToString());
                 //md5.TransformBlock(buffer, 0, (int)bufferSize, null, 0);
+                ImageName=System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
 
             }
             
@@ -86,6 +91,101 @@ namespace EncryptionDecryptionHashGeneration.Views
             }
             if ((KeyText.Text.Length!=32) || (isHexadecimal==false))
             { MessageBox.Show("The key has to contain 32 characters in hexadecimal representation "); }
+            MessageBox.Show(XOR("a6","bf"));
+
+
+
+            if (!Directory.Exists(ImageDirectory))
+            {
+                Directory.CreateDirectory(ImageDirectory);
+            }
+            //File.Create(ImageDirectory + "/msgggh.txt").Close();
+            //File.Create("C:/Users/Nidhal/Documents/msgggh.txt").Close();
+
+            if (!File.Exists(ImageDirectory + "/" + ImageName + ".encrypt"))
+            {
+                File.Create(ImageDirectory + "/" + ImageName + ".encrypt").Close();
+                
+                using (StreamWriter sw = File.CreateText(ImageDirectory +"/"+ImageName+ ".encrypt"))
+                {
+                    sw.WriteLine("Testing Writing");
+                }
+                
+
+            }
         }
+
+        //This method converts a hexadecimal character to the binary form
+        private int HexadecimalToBinary(char HexadecimalChar)
+        {
+            int Binary = 2;
+            int NewBinary=0;
+            
+            if ((HexadecimalChar == 'a') || (HexadecimalChar == 'A')) Binary = 10;
+            if ((HexadecimalChar == 'b') || (HexadecimalChar == 'B')) Binary = 11;
+            if ((HexadecimalChar == 'c') || (HexadecimalChar == 'C')) Binary = 12;
+            if ((HexadecimalChar == 'd') || (HexadecimalChar == 'D')) Binary = 13;
+            if ((HexadecimalChar == 'e') || (HexadecimalChar == 'E')) Binary = 14;
+            if ((HexadecimalChar == 'f') || (HexadecimalChar == 'F')) Binary = 15;
+            if (Binary == 2) Binary = (int)HexadecimalChar;
+            int Newnumber = Binary;
+            for (int i = 3; i >= 0; i--)
+            {
+                NewBinary += ((Newnumber / (int)Math.Pow(2, i)) * (int)Math.Pow(10, i));
+                Newnumber = Newnumber % (int)Math.Pow(2, i);
+            }
+
+
+            return (NewBinary);
+        }
+
+        //This method converts a binary character to the hexadecimal form
+        private char BinaryToHexadecimal(string Binary)
+        {
+            int Hexadecimal = 0;
+            char Hexadecimalchar='K';
+            for (int i = 3; i >= 0; i--)
+            {
+                
+                if (Binary[i]=='1') Hexadecimal+=(int)Math.Pow(2, 3-i);
+                //MessageBox.Show(Binary[i].ToString());
+            }
+            if (Hexadecimal < 10) Hexadecimalchar = Convert.ToChar(Hexadecimal.ToString());
+
+            if (Hexadecimal == 10) Hexadecimalchar = 'A';
+            if (Hexadecimal == 11) Hexadecimalchar = 'B';
+            if (Hexadecimal == 12) Hexadecimalchar = 'C';
+            if (Hexadecimal == 13) Hexadecimalchar = 'D';
+            if (Hexadecimal == 14) Hexadecimalchar = 'E';
+            if (Hexadecimal == 15) Hexadecimalchar = 'F';
+            return Hexadecimalchar;
+        }
+
+        //This method gives the result of the XOR operation applied on two hexadecimal characters
+        private string XORTwoChars(char MD5HashChar, char KeyChar)
+        {
+            string MD5HashBinary= HexadecimalToBinary(MD5HashChar).ToString();
+            string KeyBinary = HexadecimalToBinary(KeyChar).ToString();
+            string XORResult = null;
+            for (int i = 0; i < 4; i++)
+            {
+                XORResult+=((((int)MD5HashBinary[i]) + ((int)KeyBinary[i])) % 2).ToString();
+                //bufferString = XORTwoChars(MD5Hash[i], Key[i]);
+            }
+                return (XORResult);
+        }
+
+
+        //This method gives the result of the XOR operation applied on two hexadecimal strings
+        private string XOR(string MD5Hash, string Key)
+        {
+            string XORResult="";
+            for (int i = 0; i < MD5Hash.Length; i++)
+            {
+                XORResult+= BinaryToHexadecimal(XORTwoChars(MD5Hash[i], Key[i]));
+            }
+            return (XORResult);
+        }
+
     }
-}
+    }
