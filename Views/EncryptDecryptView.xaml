@@ -52,6 +52,7 @@
                    Grid.ColumnSpan="2"
                    Grid.RowSpan="4">
         <TextBlock Text="aaaaaaaaaaaaaaaaaaaa"
+                   Name="HashedText"
                        FontSize="20"
                  Margin="6,10"/>
         </Border>

@@ -39,39 +39,20 @@ namespace EncryptionDecryptionHashGeneration.Views
             {
                 //MessageBox.Show(System.IO.Path.GetExtension(openFileDialog.FileName));
                 FileAddress.Text = openFileDialog.FileName;
-                MD5 md5 = MD5.Create();
+                //MD5 md5 = MD5.Create();
                 Stream MyImage = File.OpenRead(openFileDialog.FileName);
 
-                long bufferSize = MyImage.Length;
 
-
-
-
-
-                byte[] buffer = new byte[bufferSize];
-                int bytesRead = MyImage.Read(buffer, 0, 10);
-
-                int readBytes;
-                while ((readBytes = MyImage.Read(buffer, 0, (int)bufferSize)) > 0)
+                using (var md5 = MD5.Create())
                 {
-                    md5.TransformBlock(buffer, 0, readBytes, buffer, 0);
+                    using (var stream = File.OpenRead(openFileDialog.FileName))
+                    {
+                        HashedText.Text = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "");
+                    }
                 }
 
-                md5.TransformFinalBlock(_emptyBuffer, 0, 0);
-                byte[] testresult = md5.Hash;
-                BitConverter.ToString(testresult).Replace("-", "");
-
-                var s = new StringBuilder();
-                foreach (byte b in testresult)
-                    s.Append(b.ToString("x2").ToLower());
-
                 ImageDirectory = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
-                //MessageBox.Show(s.ToString());
-
-                //BitConverter.ToString(md5.Hash).Replace("-", "");
-                //MessageBox.Show(buffer[6].ToString());
-                //md5.TransformBlock(buffer, 0, (int)bufferSize, null, 0);
-                ImageName=System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+                ImageName = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
 
             }
             
@@ -89,10 +70,10 @@ namespace EncryptionDecryptionHashGeneration.Views
                     break;
                 }
             }
-            if ((KeyText.Text.Length!=32) || (isHexadecimal==false))
-            { MessageBox.Show("The key has to contain 32 characters in hexadecimal representation "); }
-            MessageBox.Show(XOR("a6","bf"));
-
+            if (isHexadecimal==false)
+            { MessageBox.Show("The key has to be in hexadecimal representation "); }
+            //MessageBox.Show(XOR("a6","bf"));
+            else { 
 
 
             if (!Directory.Exists(ImageDirectory))
@@ -108,10 +89,11 @@ namespace EncryptionDecryptionHashGeneration.Views
                 
                 using (StreamWriter sw = File.CreateText(ImageDirectory +"/"+ImageName+ ".encrypt"))
                 {
-                    sw.WriteLine("Testing Writing");
+                    sw.WriteLine(XOR(HashedText.Text, KeyText.Text));
                 }
                 
 
+            }
             }
         }
 
@@ -180,9 +162,12 @@ namespace EncryptionDecryptionHashGeneration.Views
         private string XOR(string MD5Hash, string Key)
         {
             string XORResult="";
-            for (int i = 0; i < MD5Hash.Length; i++)
+            //In case the given key is shorter than 32 characters we repeat the key until it becomes longer than 32 character
+            string Key32 = Key;
+            while (Key32.Length < 32) Key32 += Key;
+            for (int i = 0; i < 32; i++)
             {
-                XORResult+= BinaryToHexadecimal(XORTwoChars(MD5Hash[i], Key[i]));
+                XORResult+= BinaryToHexadecimal(XORTwoChars(MD5Hash[i], Key32[i]));
             }
             return (XORResult);
         }
