@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Security.Cryptography;
 using System.IO;
 
+
 namespace EncryptionDecryptionHashGeneration.Views
 {
     /// <summary>
@@ -34,15 +35,18 @@ namespace EncryptionDecryptionHashGeneration.Views
             
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             bool? response = openFileDialog.ShowDialog();
-            
-            if(System.IO.Path.GetExtension(openFileDialog.FileName)==".png")
+
+            if ((System.IO.Path.GetExtension(openFileDialog.FileName) == ".png") || (System.IO.Path.GetExtension(openFileDialog.FileName) == ".encrypt"))
             {
-                //MessageBox.Show(System.IO.Path.GetExtension(openFileDialog.FileName));
                 FileAddress.Text = openFileDialog.FileName;
-                //MD5 md5 = MD5.Create();
+                ImageDirectory = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
+                ImageName = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+
+            }
+            else if(response == true) MessageBox.Show("Only .png and .encrypt files are accepted");
+            if (System.IO.Path.GetExtension(openFileDialog.FileName) == ".png")
+            {
                 Stream MyImage = File.OpenRead(openFileDialog.FileName);
-
-
                 using (var md5 = MD5.Create())
                 {
                     using (var stream = File.OpenRead(openFileDialog.FileName))
@@ -50,29 +54,21 @@ namespace EncryptionDecryptionHashGeneration.Views
                         HashedText.Text = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "");
                     }
                 }
-
-                ImageDirectory = System.IO.Path.GetDirectoryName(openFileDialog.FileName);
-                ImageName = System.IO.Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-
+                EncryptButton.IsEnabled = true;
+                DecryptButton.IsEnabled = false;
             }
-            
+            if (System.IO.Path.GetExtension(openFileDialog.FileName) == ".encrypt")
+            {
+                DecryptButton.IsEnabled = true;
+                EncryptButton.IsEnabled = false;
+                HashedText.Text = "";
+            }
+
         }
 
         private void EncryptButton_Click(object sender, RoutedEventArgs e)
         {
-            char[] hex_allowed = { '0','1', '2', '3','4', '5', '6', '7', '8', '9', 'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F' };
-            bool isHexadecimal = true;
-            foreach (char c in KeyText.Text)
-            {
-                if (!(hex_allowed.Contains(c)))
-                    {
-                    isHexadecimal = false;
-                    break;
-                }
-            }
-            if (isHexadecimal==false)
-            { MessageBox.Show("The key has to be in hexadecimal representation "); }
-            //MessageBox.Show(XOR("a6","bf"));
+            if (LegitKey()==false) MessageBox.Show("The key has to be in hexadecimal representation ");
             else { 
 
 
@@ -91,10 +87,27 @@ namespace EncryptionDecryptionHashGeneration.Views
                 {
                     sw.WriteLine(XOR(HashedText.Text, KeyText.Text));
                 }
-                
+                    MessageBox.Show("The encrypted file has been successfully created");
 
             }
+            else MessageBox.Show("The file " + ImageDirectory + "/" + ImageName + ".encrypt already exists");
             }
+        }
+
+        private void DecryptButton_Click(object sender, RoutedEventArgs e)
+        {
+
+            if (File.Exists(ImageDirectory + "/" + ImageName + ".png"))
+            {
+                if (LegitKey() == false) MessageBox.Show("The key has to be in hexadecimal representation ");
+                else
+                {
+                    string HashedString = File.ReadAllText(FileAddress.Text);
+                    HashedText.Text = XOR(HashedString, KeyText.Text);
+                }
+            }
+            else { MessageBox.Show("The file " + ImageDirectory + "/" + ImageName + ".png doesn't exist anymore"); }
+
         }
 
         //This method converts a hexadecimal character to the binary form
@@ -157,7 +170,6 @@ namespace EncryptionDecryptionHashGeneration.Views
                 return (XORResult);
         }
 
-
         //This method gives the result of the XOR operation applied on two hexadecimal strings
         private string XOR(string MD5Hash, string Key)
         {
@@ -171,6 +183,26 @@ namespace EncryptionDecryptionHashGeneration.Views
             }
             return (XORResult);
         }
+
+        //This method checks if the given Key is hexadecimal
+        private bool LegitKey()
+        {
+            char[] hex_allowed = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F' };
+            bool isLegit = true;
+            bool isHexadecimal = true;
+            foreach (char c in KeyText.Text)
+            {
+                if (!(hex_allowed.Contains(c)))
+                {
+                    isHexadecimal = false;
+                    break;
+                }
+            }
+            if ((isHexadecimal == false) || (KeyText.Text == "")) isLegit = false;
+            return (isLegit);
+
+        }
+
 
     }
     }

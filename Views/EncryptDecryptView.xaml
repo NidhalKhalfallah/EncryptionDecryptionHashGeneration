@@ -28,7 +28,7 @@
                     Grid.ColumnSpan="2" Margin="6,10"
                     >
             <Border BorderThickness="1" BorderBrush="Black" Margin="6,10">
-                <TextBlock Text="aaaaaaaaaaaaaa"
+                <TextBlock Text=""
                            Name="FileAddress"
                            Width="450"
                        FontSize="20" Margin="6,10"
@@ -51,7 +51,7 @@
                    Grid.Column="0" 
                    Grid.ColumnSpan="2"
                    Grid.RowSpan="4">
-        <TextBlock Text="aaaaaaaaaaaaaaaaaaaa"
+        <TextBlock Text=""
                    Name="HashedText"
                        FontSize="20"
                  Margin="6,10"/>
@@ -76,6 +76,7 @@
                    Grid.Column="1" Margin="6,10"
                     >
             <Button Name="EncryptButton"
+                    IsEnabled="False"
                    Content="Encrypt"
                     Click="EncryptButton_Click"
                    FontSize="30"
@@ -83,11 +84,12 @@
                 FontFamily="Comic Sans MS"
                    HorizontalAlignment="Center" Margin="6,10"/>
             <Button Name="DecryptButton"
+                    IsEnabled="False"
                    Content="Decrypt"
                    FontSize="30"
                    FontWeight="Bold"
                 FontFamily="Comic Sans MS"
-                   HorizontalAlignment="Center" Margin="6,10"/>
+                   HorizontalAlignment="Center" Margin="6,10" Click="DecryptButton_Click"/>
         </StackPanel>
     </Grid>
 
