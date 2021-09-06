@@ -1,7 +1,7 @@
-﻿<Application x:Class="EncryptionDecriptionHashGeneration.App"
+﻿<Application x:Class="EncryptionDecryptionHashGeneration.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:EncryptionDecriptionHashGeneration"
+             xmlns:local="clr-namespace:EncryptionDecryptionHashGeneration"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

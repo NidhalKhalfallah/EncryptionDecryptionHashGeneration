@@ -1,4 +1,4 @@
-﻿using EncryptionDecriptionHashGeneration.Commands;
+﻿using EncryptionDecryptionHashGeneration.Commands;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,16 +10,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace EncryptionDecriptionHashGeneration.ViewModels
+namespace EncryptionDecryptionHashGeneration.ViewModels
 {
     class EncryptionDecryptionViewModel: INotifyPropertyChanged
     {
         public BrowseButtonCommand BrowseButtonCommand { get; set; }
         public EncryptButtonCommand EncryptButtonCommand { get; set; }
         public DecryptButtonCommand DecryptButtonCommand { get; set; }
-
-        //public string HashedText = "ddddddddd";
         public string ImageAddress { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+
 
         bool encryptButtonEnabled;
         public bool EncryptButtonEnabled
@@ -137,11 +137,6 @@ namespace EncryptionDecriptionHashGeneration.ViewModels
 
 
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-
-
         public EncryptionDecryptionViewModel()
         {
             BrowseButtonCommand = new BrowseButtonCommand(this);
@@ -149,16 +144,25 @@ namespace EncryptionDecriptionHashGeneration.ViewModels
             DecryptButtonCommand = new DecryptButtonCommand(this);
             EncryptButtonEnabled = false;
             DecryptButtonEnabled = false;
-            //FileAddress = "dddddd";
         }
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (!string.IsNullOrEmpty(propertyName))
+            { this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
+
+        }
+
         public bool EncryptCanExecute()
         {
             return EncryptButtonEnabled;
         }
+
         public bool DecryptCanExecute()
         {
             return DecryptButtonEnabled;
         }
+
         public void BrowseOnExecute()
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
@@ -186,14 +190,9 @@ namespace EncryptionDecriptionHashGeneration.ViewModels
                 DecryptButtonEnabled = false;
                 EncryptButtonCommand.RaiseCanExecuteChanged();
                 DecryptButtonCommand.RaiseCanExecuteChanged();
-
-                //EncryptButton.IsEnabled = true;
-                //DecryptButton.IsEnabled = false;
             }
             if (System.IO.Path.GetExtension(openFileDialog.FileName) == ".encrypt")
             {
-                //DecryptButton.IsEnabled = true;
-                //EncryptButton.IsEnabled = false;
                 HashedText = "";
                 EncryptButtonEnabled = false;
                 DecryptButtonEnabled = true;
@@ -202,50 +201,30 @@ namespace EncryptionDecriptionHashGeneration.ViewModels
             }
         }
 
-        private void RaisePropertyChanged([CallerMemberName] string propertyName="")
-        {
-            if (!string.IsNullOrEmpty(propertyName))
-                { this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); }
-
-        }
-
-
         public void EncryptOnExecute()
         {
-            
             if (LegitKey() == false) MessageBox.Show("The key has to be in hexadecimal representation ");
-            
-
             else
             {
-
-
                 if (!Directory.Exists(ImageDirectory))
                 {
                     Directory.CreateDirectory(ImageDirectory);
                 }
-
                 if (!File.Exists(ImageDirectory + "/" + ImageName + ".encrypt"))
                 {
                     File.Create(ImageDirectory + "/" + ImageName + ".encrypt").Close();
-
                     using (StreamWriter sw = File.CreateText(ImageDirectory + "/" + ImageName + ".encrypt"))
                     {
                         sw.WriteLine(XOR(HashedText, KeyText));
                     }
                     MessageBox.Show("The encrypted file has been successfully created");
-
                 }
                 else MessageBox.Show("The file " + ImageDirectory + "/" + ImageName + ".encrypt already exists");
             }
-
-            
-
         }
 
         public void DecryptOnExecute()
         {
-
             if (File.Exists(ImageDirectory + "/" + ImageName + ".png"))
             {
                 if (LegitKey() == false) MessageBox.Show("The key has to be in hexadecimal representation ");
@@ -255,17 +234,14 @@ namespace EncryptionDecriptionHashGeneration.ViewModels
                     HashedText = XOR(HashedString, KeyText);
                 }
             }
-            else { MessageBox.Show("The file " + ImageDirectory + "/" + ImageName + ".png doesn't exist anymore"); }
-            
+            else { MessageBox.Show("The file " + ImageDirectory + "/" + ImageName + ".png doesn't exist anymore"); }  
         }
-
 
         //This method converts a hexadecimal character to the binary form
         private int HexadecimalToBinary(char HexadecimalChar)
         {
             int Binary = 2;
             int NewBinary = 0;
-
             if ((HexadecimalChar == 'a') || (HexadecimalChar == 'A')) Binary = 10;
             if ((HexadecimalChar == 'b') || (HexadecimalChar == 'B')) Binary = 11;
             if ((HexadecimalChar == 'c') || (HexadecimalChar == 'C')) Binary = 12;
@@ -279,8 +255,6 @@ namespace EncryptionDecriptionHashGeneration.ViewModels
                 NewBinary += ((Newnumber / (int)Math.Pow(2, i)) * (int)Math.Pow(10, i));
                 Newnumber = Newnumber % (int)Math.Pow(2, i);
             }
-
-
             return (NewBinary);
         }
 
@@ -291,12 +265,9 @@ namespace EncryptionDecriptionHashGeneration.ViewModels
             char Hexadecimalchar = 'K';
             for (int i = 3; i >= 0; i--)
             {
-
                 if (Binary[i] == '1') Hexadecimal += (int)Math.Pow(2, 3 - i);
-                //MessageBox.Show(Binary[i].ToString());
             }
             if (Hexadecimal < 10) Hexadecimalchar = Convert.ToChar(Hexadecimal.ToString());
-
             if (Hexadecimal == 10) Hexadecimalchar = 'A';
             if (Hexadecimal == 11) Hexadecimalchar = 'B';
             if (Hexadecimal == 12) Hexadecimalchar = 'C';
@@ -315,7 +286,6 @@ namespace EncryptionDecriptionHashGeneration.ViewModels
             for (int i = 0; i < 4; i++)
             {
                 XORResult += ((((int)MD5HashBinary[i]) + ((int)KeyBinary[i])) % 2).ToString();
-                //bufferString = XORTwoChars(MD5Hash[i], Key[i]);
             }
             return (XORResult);
         }
@@ -341,26 +311,18 @@ namespace EncryptionDecriptionHashGeneration.ViewModels
             bool isLegit = true;
             bool isHexadecimal = true;
             if ((KeyText == null) || (KeyText == "")) isLegit = false;
-            else { 
-
-
-            foreach (char c in KeyText)
-            {
-                if (!(hex_allowed.Contains(c)))
+            else {
+                foreach (char c in KeyText)
                 {
-                    isHexadecimal = false;
-                    break;
+                    if (!(hex_allowed.Contains(c)))
+                    {
+                        isHexadecimal = false;
+                        break;
+                    }
                 }
-            }
-            
-            if (isHexadecimal == false)  isLegit = false;
+                if (isHexadecimal == false) isLegit = false;
             }
             return (isLegit);
-
         }
-
-
-
-
     }
 }

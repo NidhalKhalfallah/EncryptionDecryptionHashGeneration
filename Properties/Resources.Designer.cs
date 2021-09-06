@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EncryptionDecriptionHashGeneration.Properties
+namespace EncryptionDecryptionHashGeneration.Properties
 {
 
 
@@ -44,7 +44,7 @@ namespace EncryptionDecriptionHashGeneration.Properties
             {
                 if ((resourceMan == null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EncryptionDecriptionHashGeneration.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EncryptionDecryptionHashGeneration.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

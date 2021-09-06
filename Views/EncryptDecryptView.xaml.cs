@@ -14,14 +14,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Security.Cryptography;
 using System.IO;
-using EncryptionDecriptionHashGeneration.ViewModels;
+using EncryptionDecryptionHashGeneration.ViewModels;
 
 
 namespace EncryptionDecryptionHashGeneration.Views
 {
-    /// <summary>
-    /// Logique d'interaction pour EncryptDecryptView.xaml
-    /// </summary>
     public partial class EncryptDecryptView : UserControl
     {
         public EncryptDecryptView()

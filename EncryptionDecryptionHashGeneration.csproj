@@ -60,7 +60,6 @@
     <Compile Include="Commands\DecryptButtonCommand.cs" />
     <Compile Include="Commands\EncryptButtonCommand.cs" />
     <Compile Include="ViewModels\EncryptionDecryptionViewModel.cs" />
-    <Compile Include="ViewModels\EncryptButtonViewModel.cs" />
     <Compile Include="Views\EncryptDecryptView.xaml.cs">
       <DependentUpon>EncryptDecryptView.xaml</DependentUpon>
     </Compile>

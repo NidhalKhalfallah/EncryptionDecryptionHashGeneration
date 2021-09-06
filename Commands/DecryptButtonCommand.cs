@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using EncryptionDecriptionHashGeneration.ViewModels;
+using EncryptionDecryptionHashGeneration.ViewModels;
 
-namespace EncryptionDecriptionHashGeneration.Commands
+namespace EncryptionDecryptionHashGeneration.Commands
 {
     class DecryptButtonCommand : ICommand
     {

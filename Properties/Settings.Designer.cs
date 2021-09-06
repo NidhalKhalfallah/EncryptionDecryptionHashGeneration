@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EncryptionDecriptionHashGeneration.Properties
+namespace EncryptionDecryptionHashGeneration.Properties
 {
 
 
