@@ -56,6 +56,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commands\BrowseButtonCommand.cs" />
+    <Compile Include="Commands\DecryptButtonCommand.cs" />
+    <Compile Include="Commands\EncryptButtonCommand.cs" />
+    <Compile Include="ViewModels\EncryptionDecryptionViewModel.cs" />
+    <Compile Include="ViewModels\EncryptButtonViewModel.cs" />
     <Compile Include="Views\EncryptDecryptView.xaml.cs">
       <DependentUpon>EncryptDecryptView.xaml</DependentUpon>
     </Compile>
@@ -101,6 +106,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
